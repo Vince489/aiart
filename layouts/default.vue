@@ -30,7 +30,7 @@
       <a href="#" class="text-white block py-2">About</a>
       <a href="#" class="text-white block py-2">Contact</a>
       <a href="#" class="text-white block py-2">Login</a>
-      <a href="#" class="text-white block py-2">Sign Up</a>
+      <a href="/signup" class="text-white block py-2">Sign Up</a>
     </div>
   </nav>
 
