@@ -5,9 +5,9 @@
 
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <label for="userName" class="block text-gray-700 text-sm font-medium mb-2">userName</label>
-          <input type="text" v-model="userName" placeholder="Enter your userName" class="border p-2 rounded-md w-full">
-          <span v-if="userNameError" class="text-red-500 text-sm">{{ userNameError }}</span>
+          <label for="username" class="block text-gray-700 text-sm font-medium mb-2">Username</label>
+          <input type="text" v-model="username" placeholder="Enter your username" class="border p-2 rounded-md w-full">
+          <span v-if="usernameError" class="text-red-500 text-sm">{{ usernameError }}</span>
         </div>
 
         <div class="mb-4">
@@ -36,10 +36,10 @@
 export default {
   data() {
     return {
-      userName: '',
+      username: '',
       email: '',
       password: '',
-      userNameError: '',
+      usernameError: '',
       emailError: '',
       passwordError: '',
     };
@@ -47,13 +47,13 @@ export default {
   methods: {
     async handleSubmit() {
       // Reset errors
-      this.userNameError = '';
+      this.usernameError = '';
       this.emailError = '';
       this.passwordError = '';
 
       // Validation logic (you can replace this with your own validation)
-      if (!this.userName) {
-        this.userNameError = 'userName is required.';
+      if (!this.username) {
+        this.usernameError = 'Username is required.';
       }
 
       if (!this.email) {
@@ -67,17 +67,15 @@ export default {
       }
 
       // Perform signup logic if no errors
-      if (!this.userNameError && !this.emailError && !this.passwordError) {
+      if (!this.usernameError && !this.emailError && !this.passwordError) {
         try {
-          const response = await fetch('http://localhost:4000/api/v1/user/register', { // Modified endpoint
+          const response = await fetch('http://localhost:4400/signup', {
             method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              userName: this.userName, // Modified property name
+              gamerTag: this.username,
               email: this.email,
               password: this.password,
             }),
@@ -85,7 +83,7 @@ export default {
           const data = await response.json();
           console.log(data); // Log the response from the API
           // Optionally, redirect to another page upon successful signup
-          this.$router.push('/');
+          // this.$router.push('/success');
         } catch (error) {
           console.error('Error signing up:', error);
         }
