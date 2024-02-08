@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { useSessionStore } from '@/stores/sessionStore'; 
+import { useSessionStore } from '@/stores/authStore'; 
 
 export default {
   data() {
