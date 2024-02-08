@@ -5,7 +5,7 @@
 
       <form @submit.prevent="handleSubmit">
         <div class="mb-4">
-          <label for="userName" class="block text-gray-700 text-sm font-medium mb-2">userName</label>
+          <label for="userName" class="block text-gray-700 text-sm font-medium mb-2">Username</label>
           <input type="text" v-model="userName" placeholder="Enter your userName" class="border p-2 rounded-md w-full">
           <span v-if="userNameError" class="text-red-500 text-sm">{{ userNameError }}</span>
         </div>
