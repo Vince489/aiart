@@ -14,23 +14,23 @@
       </div>
       <div class="hidden md:flex items-center space-x-4">
         <!-- Navigation links go here -->
-        <a href="#" class="text-white">Generate</a>
-        <a href="#" class="text-white">Art Board</a>
-        <a href="#" class="text-white">Contact</a>
+        <NuxtLink to ="#" class="text-white">Generate</NuxtLink>
+        <NuxtLink to ="#" class="text-white">Art Board</NuxtLink>
+        <NuxtLink to ="#" class="text-white">Contact</NuxtLink>
       </div>
       <div class="hidden md:flex items-center space-x-4">
         <!-- Login and Sign Up links go here -->
-        <a href="#" class="text-white">Login</a>
-        <a href="/signup" class="text-white">Sign Up</a>
+        <NuxtLink to ="/login" class="text-white">Login</NuxtLink>
+        <NuxtLink to ="/signup" class="text-white">Sign Up</NuxtLink>
       </div>
     </div>
     <!-- Mobile Navigation Dropdown -->
     <div v-if="showMobileNav" class="md:hidden">
-      <a href="#" class="text-white block py-2">Generate</a>
-      <a href="#" class="text-white block py-2">About</a>
-      <a href="#" class="text-white block py-2">Contact</a>
-      <a href="#" class="text-white block py-2">Login</a>
-      <a href="/signup" class="text-white block py-2">Sign Up</a>
+      <NuxtLink @click.native="toggleMobileNav" to ="#" class="text-white block py-2">Generate</NuxtLink>
+      <NuxtLink @click.native="toggleMobileNav" to ="#" class="text-white block py-2">About</NuxtLink>
+      <NuxtLink @click.native="toggleMobileNav" to ="#" class="text-white block py-2">Contact</NuxtLink>
+      <NuxtLink @click.native="toggleMobileNav" to ="/login" class="text-white block py-2">Login</NuxtLink>
+      <NuxtLink @click.native="toggleMobileNav" to ="/signup" class="text-white block py-2">Sign Up</NuxtLink>
     </div>
   </nav>
 
@@ -38,8 +38,6 @@
     <slot />
   </div>
 </template>
-
-
 
 <script>
 export default {
@@ -52,9 +50,16 @@ export default {
     toggleMobileNav() {
       this.showMobileNav = !this.showMobileNav;
     },
+    closeMobileNav() {
+      this.showMobileNav = false;
+    },
+  },
+  watch: {
+    $route() {
+      this.closeMobileNav();
+    },
   },
 };
-
 </script>
 
 <style scoped>
@@ -65,10 +70,3 @@ export default {
   }
 }
 </style>
-
-
-
-
-
-
-
