@@ -19,9 +19,9 @@
         <NuxtLink to ="#" class="text-white">Contact</NuxtLink>
       </div>
       <div class="hidden md:flex items-center space-x-4">
-        <!-- Login and Sign Up links go here -->
-        <NuxtLink to ="/login" class="text-white">Login</NuxtLink>
-        <NuxtLink to ="/signup" class="text-white">Sign Up</NuxtLink>
+        <NuxtLink v-if="!isLoggedIn" to="/login" class="text-white">Login</NuxtLink>
+        <button v-else @click="logout" class="text-white">Logout</button>        
+        <NuxtLink to="/signup" class="text-white">Sign Up</NuxtLink>
       </div>
     </div>
     <!-- Mobile Navigation Dropdown -->
@@ -40,11 +40,20 @@
 </template>
 
 <script>
+import { useAuthStore } from '~/stores/authStore';
+const authStore = useAuthStore();
+const isLoggedIn = authStore.isAuthenticated;
+
 export default {
   data() {
     return {
       showMobileNav: false,
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return useAuthStore().isAuthenticated;
+    },
   },
   methods: {
     toggleMobileNav() {
@@ -52,6 +61,10 @@ export default {
     },
     closeMobileNav() {
       this.showMobileNav = false;
+    },
+    logout() {
+      useAuthStore().logout();
+      this.$router.push('/');
     },
   },
   watch: {
