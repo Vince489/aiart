@@ -25,69 +25,66 @@
   </div>
 </template>
 
-<script>
-import { useSessionStore } from '@/stores/authStore'; 
+<script setup>
+const email = ref('');
+const password = ref('');
+const emailError = ref('');
+const passwordError = ref('');
 
-export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-      emailError: '',
-      passwordError: '',
-    };
-  },
-  methods: {
-    async handleSubmit() {
-      // Reset errors
-      this.emailError = '';
-      this.passwordError = '';
+const router = useRouter();
 
-      // Validation logic (you can replace this with your own validation)
-      if (!this.email) {
-        this.emailError = 'Email is required.';
-      } else if (!this.isValidEmail(this.email)) {
-        this.emailError = 'Invalid email format.';
+const handleSubmit = async () => {
+  // Reset errors
+  emailError.value = '';
+  passwordError.value = '';
+
+  // Validation logic (you can replace this with your own validation)
+  if (!email.value) {
+    emailError.value = 'Email is required.';
+  } else if (!isValidEmail(email.value)) {
+    emailError.value = 'Invalid email format.';
+  }
+
+  if (!password.value) {
+    passwordError.value = 'Password is required.';
+  }
+
+  // Perform login logic if no errors
+  if (!emailError.value && !passwordError.value) {
+    try {
+      const response = await fetch('http://localhost:4000/api/v1/user/login', {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.value,
+          password: password.value,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
       }
 
-      if (!this.password) {
-        this.passwordError = 'Password is required.';
-      }
+      // Console log the response for now
+      console.log('Login response:', data);
 
-      // Perform login logic if no errors
-      if (!this.emailError && !this.passwordError) {
-        try {
-          const response = await fetch('http://localhost:4000/api/v1/user/login', {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: this.email,
-              password: this.password,
-            }),
-          });
-          const data = await response.json();
-          console.log(data); 
-
-          // Update session store with user data
-          const sessionStore = useSessionStore();
-          sessionStore.loginUser(data.user);
-
-          // Redirect to dashboard
-          this.$router.push('/dashboard');
-        } catch (error) {
-          console.error('Error logging in:', error);
-        }
-      }
-    },
-    isValidEmail(email) {
-      // Basic email format validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
+      // Redirect to dashboard
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Error logging in:', error);
     }
-  },
+  }
+};
+
+const isValidEmail = (email) => {
+  // Basic email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 };
 </script>
