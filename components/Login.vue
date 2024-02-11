@@ -1,21 +1,26 @@
 <template>
-  <div class="bg-gray-100">
+  <div class="bg-gray-800">
     <div class="flex flex-col items-center justify-center h-screen">
-      <div class="bg-white p-8 shadow-md rounded-md w-full max-w-md">
-        <h2 class="text-2xl font-semibold mb-4">Login</h2>
-        <form @submit.prevent="handleSubmit">
+      <div class="bg-gray-700 p-8 shadow-md rounded-md w-full max-w-md">
+        <h2 class="text-slate-200 text-2xl font-semibold mb-4">Login</h2>
+        <form @submit.prevent="handleLogin">
           <div class="mb-4">
-            <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email</label>
-            <input type="email" v-model="email" placeholder="Enter your email" class="border p-2 rounded-md w-full">
+            <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Email</label>
+
+            <input  v-model="email" type="email" class="bg-gray-800 border border-gray-300 text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your email" required>
             <span v-if="emailError" class="text-red-500 text-sm">{{ emailError }}</span>
           </div>
-          <div class="mb-6">
-            <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Password</label>
-            <input type="password" v-model="password" placeholder="Enter your password" class="border p-2 rounded-md w-full">
+
+          <div class="mb-4">
+            <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Password</label>
+            <input v-model="password" type="password" class=" text-slate-200 text-sm rounded-lg block w-full p-2.5" placeholder="Enter your password" required>
             <span v-if="passwordError" class="text-red-500 text-sm">{{ passwordError }}</span>
           </div>
+
+          
+
           <div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200">
+            <button type="submit" class="bg-blue-500 text-slate-200 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:border-blue-700 ">
               Login
             </button>
           </div>
@@ -25,20 +30,24 @@
   </div>
 </template>
 
+
 <script setup>
+import { useAuthStore } from '~/stores/authStore';
+
+const authStore = useAuthStore();
+const router = useRouter();
+
 const email = ref('');
 const password = ref('');
 const emailError = ref('');
 const passwordError = ref('');
 
-const router = useRouter();
-
-const handleSubmit = async () => {
+const handleLogin = async () => {
   // Reset errors
   emailError.value = '';
   passwordError.value = '';
 
-  // Validation logic (you can replace this with your own validation)
+  // Validation logic
   if (!email.value) {
     emailError.value = 'Email is required.';
   } else if (!isValidEmail(email.value)) {
@@ -71,10 +80,15 @@ const handleSubmit = async () => {
         throw new Error(data.message);
       }
 
-      // Console log the response for now
-      console.log('Login response:', data);
+      // Pass userId and userName if needed
+      const userId = 'j'; // Replace with userId
+      const userName = ''; // Replace with userName
+      
+      // Call the login action from the authStore to update isLoggedIn state
+      // await authStore.login(userId, userName);
+      console.log(data);
 
-      // Redirect to dashboard
+      // Redirect to dashboard after successful login
       router.push('/dashboard');
     } catch (error) {
       console.error('Error logging in:', error);
