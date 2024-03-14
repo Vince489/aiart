@@ -69,7 +69,7 @@ export default {
           const data = await response.json();
           console.log(data); // Log the response from the API
           // Optionally, redirect to another page upon successful signup
-          this.$router.push('/');
+          this.$router.push('/login');
         } catch (error) {
           console.error('Error signing up:', error);
         }
