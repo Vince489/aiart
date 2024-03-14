@@ -20,7 +20,6 @@
       </div>
       <div class="hidden md:flex items-center space-x-4">
         <NuxtLink to="/login" class="text-slate-200">Login</NuxtLink>
-        <button @click="logout" class="text-slate-200">Logout</button>        
         <NuxtLink to="/signup" class="text-slate-200">Sign Up</NuxtLink>
       </div>
     </div>

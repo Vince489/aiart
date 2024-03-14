@@ -56,7 +56,7 @@ export default {
       // Perform signup logic if no errors
       if (!this.userNameError && !this.userNameError && !this.passwordError) {
         try {
-          const response = await fetch('http://localhost:5550/api/v1/user/register', { // Modified endpoint
+          const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/register', { // Modified endpoint
             method: 'POST',
             mode: 'cors',
             credentials: 'include',
