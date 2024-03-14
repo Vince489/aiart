@@ -5,22 +5,20 @@
         <h2 class="text-slate-200 text-2xl font-semibold mb-4">Login</h2>
         <form @submit.prevent="handleLogin">
           <div class="mb-4">
-            <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Email</label>
+            <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Username</label>
 
-            <input  v-model="email" type="email" class="bg-gray-800 border border-gray-300 text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your email" required>
-            <span v-if="emailError" class="text-red-500 text-sm">{{ emailError }}</span>
+            <input v-model="userName" type="text" class="bg-gray-800 border border-gray-300 text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your username" required>
+            <span v-if="userNameError" class="text-red-500 text-sm">{{ userNameError }}</span>
           </div>
 
           <div class="mb-4">
             <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Password</label>
-            <input v-model="password" type="password" class=" text-slate-200 text-sm rounded-lg block w-full p-2.5" placeholder="Enter your password" required>
+            <input v-model="password" type="password" class="text-slate-200 text-sm rounded-lg block w-full p-2.5" placeholder="Enter your password" required>
             <span v-if="passwordError" class="text-red-500 text-sm">{{ passwordError }}</span>
           </div>
 
-          
-
           <div>
-            <button type="submit" class="bg-blue-500 text-slate-200 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:border-blue-700 ">
+            <button type="submit" class="bg-blue-500 text-slate-200 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:border-blue-700">
               Login
             </button>
           </div>
@@ -30,75 +28,32 @@
   </div>
 </template>
 
-
 <script setup>
-import { useAuthStore } from '~/stores/authStore';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '~/stores/userStore';
 
-const authStore = useAuthStore();
 const router = useRouter();
-
-const email = ref('');
+const userStore = useUserStore();
+const userName = ref('');
 const password = ref('');
-const emailError = ref('');
+const userNameError = ref('');
 const passwordError = ref('');
 
 const handleLogin = async () => {
   // Reset errors
-  emailError.value = '';
+  userNameError.value = '';
   passwordError.value = '';
 
-  // Validation logic
-  if (!email.value) {
-    emailError.value = 'Email is required.';
-  } else if (!isValidEmail(email.value)) {
-    emailError.value = 'Invalid email format.';
-  }
-
-  if (!password.value) {
-    passwordError.value = 'Password is required.';
-  }
-
   // Perform login logic if no errors
-  if (!emailError.value && !passwordError.value) {
+  if (!userNameError.value && !passwordError.value) {
     try {
-      const response = await fetch('http://localhost:4000/api/v1/user/login', {
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email.value,
-          password: password.value,
-        }),
-      });
+      await userStore.login({ userName: userName.value, password: password.value });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message);
-      }
-
-      // Pass userId and userName if needed
-      const userId = 'j'; // Replace with userId
-      const userName = ''; // Replace with userName
-      
-      // Call the login action from the authStore to update isLoggedIn state
-      // await authStore.login(userId, userName);
-      console.log(data);
-
-      // Redirect to dashboard after successful login
-      router.push('/dashboard');
+      // Redirect to dashboard
+      router.push({ name: 'dashboard' });
     } catch (error) {
       console.error('Error logging in:', error);
     }
   }
-};
-
-const isValidEmail = (email) => {
-  // Basic email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
 };
 </script>

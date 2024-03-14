@@ -10,12 +10,6 @@
           <span v-if="userNameError" class="text-red-500 text-sm">{{ userNameError }}</span>
         </div>
 
-        <div class="mb-4">
-          <label for="email" class="block text-slate-200 text-sm font-medium mb-2">Email</label>
-          <input type="email" v-model="email" placeholder="Enter your email" class="border p-2 rounded-md w-full">
-          <span v-if="emailError" class="text-red-500 text-sm">{{ emailError }}</span>
-        </div>
-
         <div class="mb-6">
           <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Password</label>
           <input type="password" v-model="password" placeholder="Enter your password" class="border p-2 rounded-md w-full">
@@ -37,10 +31,8 @@ export default {
   data() {
     return {
       userName: '',
-      email: '',
       password: '',
       userNameError: '',
-      emailError: '',
       passwordError: '',
     };
   },
@@ -48,18 +40,13 @@ export default {
     async handleSubmit() {
       // Reset errors
       this.userNameError = '';
-      this.emailError = '';
       this.passwordError = '';
 
       // Validation logic (you can replace this with your own validation)
       if (!this.userName) {
         this.userNameError = 'userName is required.';
-      }
-
-      if (!this.email) {
-        this.emailError = 'Email is required.';
-      } else if (!this.isValidEmail(this.email)) {
-        this.emailError = 'Invalid email format.';
+      } else if (!this.isValiduserName(this.userName)) {
+        this.userNameError = 'Invalid userName format.';
       }
 
       if (!this.password) {
@@ -67,9 +54,9 @@ export default {
       }
 
       // Perform signup logic if no errors
-      if (!this.userNameError && !this.emailError && !this.passwordError) {
+      if (!this.userNameError && !this.userNameError && !this.passwordError) {
         try {
-          const response = await fetch('http://localhost:4000/api/v1/user/register', { // Modified endpoint
+          const response = await fetch('http://localhost:5550/api/v1/user/register', { // Modified endpoint
             method: 'POST',
             mode: 'cors',
             credentials: 'include',
@@ -78,7 +65,7 @@ export default {
             },
             body: JSON.stringify({
               userName: this.userName, // Modified property name
-              email: this.email,
+              userName: this.userName,
               password: this.password,
             }),
           });
@@ -92,10 +79,10 @@ export default {
       }
     },
     
-    isValidEmail(email) {
-      // Basic email format validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
+    isValiduserName(userName) {
+      // Basic userName format validation
+      const userNameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return userNameRegex.test(userName);
     },
   },
 };

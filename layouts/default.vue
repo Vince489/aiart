@@ -19,18 +19,18 @@
         <NuxtLink to ="/dashboard" class="text-slate-200">Dashboard</NuxtLink>
       </div>
       <div class="hidden md:flex items-center space-x-4">
-        <NuxtLink v-if="!isLoggedIn" to="/login" class="text-slate-200">Login</NuxtLink>
-        <button v-else @click="logout" class="text-slate-200">Logout</button>        
+        <NuxtLink to="/login" class="text-slate-200">Login</NuxtLink>
+        <button @click="logout" class="text-slate-200">Logout</button>        
         <NuxtLink to="/signup" class="text-slate-200">Sign Up</NuxtLink>
       </div>
     </div>
     <!-- Mobile Navigation Dropdown -->
-    <div v-if="showMobileNav" class="md:hidden">
-      <NuxtLink @click.native="toggleMobileNav" to ="#" class="text-slate-200 block py-2">Generate</NuxtLink>
-      <NuxtLink @click.native="toggleMobileNav" to ="#" class="text-slate-200 block py-2">About</NuxtLink>
-      <NuxtLink @click.native="toggleMobileNav" to ="#" class="text-slate-200 block py-2">Contact</NuxtLink>
-      <NuxtLink @click.native="toggleMobileNav" to ="/login" class="text-slate-200 block py-2">Login</NuxtLink>
-      <NuxtLink @click.native="toggleMobileNav" to ="/signup" class="text-slate-200 block py-2">Sign Up</NuxtLink>
+    <div class="md:hidden">
+      <NuxtLink to ="#" class="text-slate-200 block py-2">Generate</NuxtLink>
+      <NuxtLink to ="#" class="text-slate-200 block py-2">About</NuxtLink>
+      <NuxtLink to ="#" class="text-slate-200 block py-2">Contact</NuxtLink>
+      <NuxtLink to ="/login" class="text-slate-200 block py-2">Login</NuxtLink>
+      <NuxtLink to ="/signup" class="text-slate-200 block py-2">Sign Up</NuxtLink>
     </div>
   </nav>
 
@@ -40,65 +40,11 @@
 </template>
 
 <script>
-import { useAuthStore } from '~/stores/authStore';
-const authStore = useAuthStore();
-const isLoggedIn = authStore.isAuthenticated;
+import { useUserStore } from '~/stores/userStore';
+const userStore = useUserStore();
 
-export default {
-  data() {
-    return {
-      showMobileNav: false,
-    };
-  },
-  computed: {
-    isLoggedIn() {
-      return useAuthStore().isAuthenticated;
-    },
-  },
-  methods: {
-    toggleMobileNav() {
-      this.showMobileNav = !this.showMobileNav;
-    },
-    closeMobileNav() {
-      this.showMobileNav = false;
-    },
-    logout() {
-      useAuthStore().logout();
-    },
-    async logout() {
-      try {
-        const response = await fetch('http://localhost:4000/api/v1/user/logout', {
-          method: 'GET',
-          mode: 'cors',
-          credentials: 'include',
-        });        
-        // Check if the request was successful
-        if (!response.ok) {
-          throw new Error('Logout failed');
-        }
+userStore.getUserData();
 
-        // Delete session cookie
-        document.cookie = "zprompter=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-     
-        
-        // Redirect to login page
-        this.$router.push('/login');
-      } catch (error) {
-        console.error('Logout failed:', error);
-        // Handle logout failure, e.g., display an error message
-      }
-    }
-  },
-  mounted() {
-    // Log the value of isLoggedIn when the component is mounted
-    console.log('isLoggedIn:', this.isLoggedIn);    
-  },
-  watch: {
-    $route() {
-      this.closeMobileNav();
-    },
-  },
-};
 </script>
 
 <style scoped>
