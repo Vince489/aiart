@@ -45,8 +45,6 @@ export default {
       // Validation logic (you can replace this with your own validation)
       if (!this.userName) {
         this.userNameError = 'userName is required.';
-      } else if (!this.isValiduserName(this.userName)) {
-        this.userNameError = 'Invalid userName format.';
       }
 
       if (!this.password) {
@@ -54,7 +52,7 @@ export default {
       }
 
       // Perform signup logic if no errors
-      if (!this.userNameError && !this.userNameError && !this.passwordError) {
+      if (!this.userNameError && !this.passwordError) {
         try {
           const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/register', { // Modified endpoint
             method: 'POST',
@@ -65,7 +63,6 @@ export default {
             },
             body: JSON.stringify({
               userName: this.userName, // Modified property name
-              userName: this.userName,
               password: this.password,
             }),
           });
