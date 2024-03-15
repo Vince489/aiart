@@ -1,74 +1,79 @@
 <template>
-  <nav class="bg-gray-900 p-4 fixed top-0 left-0 right-0">
-    <div class="container mx-auto flex items-center justify-between">
-      <div class="flex items-center">
-        <NuxtLink to="/" class="text-slate-200 text-lg font-semibold">Z-Prompter</NuxtLink>
-      </div>
-      <div class="md:hidden">
-        <!-- Hamburger Icon for Mobile -->
-        <button @click="toggleMenu" id="menu-btn" class="text-slate-200">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="white">
-            <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="hidden md:flex items-center space-x-4">
-        <!-- Navigation links go here -->
-        <NuxtLink to="#" class="text-slate-200">Generate</NuxtLink>
-        <NuxtLink to="#" class="text-slate-200">Art Board</NuxtLink>
-        <NuxtLink to="/dashboard" class="text-slate-200">Dashboard</NuxtLink>
-      </div>
-      <div class="hidden md:flex items-center space-x-4">
-        <NuxtLink to="/login" class="text-slate-200">Login</NuxtLink>
-        <NuxtLink to="/signup" class="text-slate-200">Sign Up</NuxtLink>
-      </div>
-    </div>
-    <!-- Mobile Navigation Dropdown -->
-    <div v-if="toggle_menu" id="mobile-menu" class="mobile-menu md:hidden">
-      <NuxtLink to="#" class="text-slate-200 block py-2">Generate</NuxtLink>
-      <NuxtLink to="#" class="text-slate-200 block py-2">About</NuxtLink>
-      <NuxtLink to="#" class="text-slate-200 block py-2">Contact</NuxtLink>
-      <NuxtLink to="/login" class="text-slate-200 block py-2">Login</NuxtLink>
-      <NuxtLink to="/signup" class="text-slate-200 block py-2">Sign Up</NuxtLink>
-    </div>
-  </nav>
+  <div class="bg-gray-800">
+    <div class="flex flex-col items-center justify-center h-screen">
+      <div class="bg-gray-700 p-8 shadow-md rounded-md w-full max-w-md">
+        <h2 class="text-slate-200 text-2xl font-semibold mb-4">Login</h2>
+        <form @submit.prevent="handleLogin">
+          <div class="mb-4">
+            <label for="username" class="block text-slate-200 text-sm font-medium mb-2">Username</label>
+            <input v-model="userName" type="text" class="bg-gray-800 border border-gray-300 text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your username" required>
+            <span v-if="userNameError" class="text-red-500 text-sm">{{ userNameError }}</span>
+          </div>
 
-  <div>
-    <slot />
+          <div class="mb-4">
+            <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Password</label>
+            <input v-model="password" type="password" class="text-slate-200 text-sm rounded-lg block w-full p-2.5" placeholder="Enter your password" required>
+            <span v-if="passwordError" class="text-red-500 text-sm">{{ passwordError }}</span>
+          </div>
+
+          <div>
+            <button type="submit" class="bg-blue-500 text-slate-200 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:border-blue-700">
+              Login
+            </button>
+          </div>
+
+          <div v-if="generalError" class="text-red-500 text-sm mt-4">{{ generalError }}</div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
+
 <script setup>
 import { useUserStore } from '~/stores/userStore';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const userName = ref('');
+const password = ref('');
+const userNameError = ref('');
+const passwordError = ref('');
+const generalError = ref('');
 
 const userStore = useUserStore();
+const router = useRouter();
 
-const isAuthenticated = userStore.isAuthenticated;
+const handleLogin = async () => {
+  // Reset errors
+  userNameError.value = '';
+  passwordError.value = '';
+  generalError.value = '';
 
-let toggle_menu = ref(false);
+  if (!userNameError.value && !passwordError.value) {
+  try {
+    await userStore.login({ userName: userName.value, password: password.value });
 
-onMounted(() => {
-  window.addEventListener("click", function (e) {
-    if (
-      document.getElementById("mobile-menu") &&
-      !document.getElementById("menu-btn").contains(e.target)
-    ) {
-      toggle_menu.value = false;
+    // Check if the login attempt was successful
+    if (userStore.isAuthenticated) {
+      // Redirect to dashboard
+      router.push({ name: 'dashboard' });
+    } else {
+      // Handle unsuccessful login (optional)
+      console.error('Login failed.');
+      generalError.value = 'Login failed.';
     }
-  });
-});
-
-function toggleMenu() {
-  toggle_menu.value = !toggle_menu.value;
-}
-</script>
-
-<style scoped>
-/* Additional styling specific to this component */
-@media (max-width: 767px) {
-  .md\\:hidden {
-    display: none !important;
+  } catch (error) {
+    // Handle login error
+    console.error('Error logging in:', error.message);
+    if (error.message === 'Invalid username') {
+      userNameError.value = error.message;
+    } else if (error.message === 'Invalid password') {
+      passwordError.value = error.message;
+    } else {
+      generalError.value = error.message;
+    }
   }
 }
-</style>
+};
+</script>

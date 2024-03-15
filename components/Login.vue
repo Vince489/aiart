@@ -5,8 +5,7 @@
         <h2 class="text-slate-200 text-2xl font-semibold mb-4">Login</h2>
         <form @submit.prevent="handleLogin">
           <div class="mb-4">
-            <label for="password" class="block text-slate-200 text-sm font-medium mb-2">Username</label>
-
+            <label for="username" class="block text-slate-200 text-sm font-medium mb-2">Username</label>
             <input v-model="userName" type="text" class="bg-gray-800 border border-gray-300 text-slate-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Enter your username" required>
             <span v-if="userNameError" class="text-red-500 text-sm">{{ userNameError }}</span>
           </div>
@@ -22,6 +21,8 @@
               Login
             </button>
           </div>
+
+          <div v-if="generalError" class="text-red-500 text-sm mt-4">{{ generalError }}</div>
         </form>
       </div>
     </div>
@@ -29,31 +30,37 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
 import { useUserStore } from '~/stores/userStore';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const userStore = useUserStore();
 const userName = ref('');
 const password = ref('');
 const userNameError = ref('');
 const passwordError = ref('');
+const generalError = ref('');
+
+const userStore = useUserStore();
+const router = useRouter();
 
 const handleLogin = async () => {
   // Reset errors
   userNameError.value = '';
   passwordError.value = '';
+  generalError.value = '';
 
-  // Perform login logic if no errors
-  if (!userNameError.value && !passwordError.value) {
-    try {
-      await userStore.login({ userName: userName.value, password: password.value });
+  try {
+    // Perform login
+    await userStore.login({ userName: userName.value, password: password.value });
 
+    // Check if the login attempt was successful
+    if (userStore.isAuthenticated) {
       // Redirect to dashboard
       router.push({ name: 'dashboard' });
-    } catch (error) {
-      console.error('Error logging in:', error);
     }
+  } catch (error) {
+    // Handle login error
+    generalError.value = 'Error logging in: ' + error.message;
   }
 };
 </script>
