@@ -54,7 +54,7 @@ const handleLogin = async () => {
     await userStore.login({ userName: userName.value, password: password.value });
 
     // Check if the login attempt was successful
-    if (userStore.isAuthenticated) {
+    if (userStore.userData.isAuthenticated) {
       // Redirect to dashboard
       router.push({ name: 'dashboard' });
     }

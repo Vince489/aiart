@@ -75,12 +75,6 @@ export default {
         }
       }
     },
-    
-    isValiduserName(userName) {
-      // Basic userName format validation
-      const userNameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return userNameRegex.test(userName);
-    },
   },
 };
 </script>
