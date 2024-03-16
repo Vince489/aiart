@@ -32,7 +32,6 @@ export const useUserStore = defineStore({
         });
 
         const data = await response.json();
-        console.log('Login:', data.user.isAuthenticated);
         if (!response.ok) {
           throw new Error(data.message);
         }
@@ -40,7 +39,10 @@ export const useUserStore = defineStore({
         // Store JWT token in localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', data.token);
+          localStorage.setItem('stat', data.user.isAuthenticated);
         }
+
+        console.log('Login response:', data.user);
         
         // Set user data and authentication status
         await this.setUserData(data.user); // Wait for setting state to complete
