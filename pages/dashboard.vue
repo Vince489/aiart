@@ -23,6 +23,12 @@ import { useUserStore } from '~/stores/userStore';
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
+definePageMeta({
+  middleware: 'auth',
+  title: 'Dashboard',
+  description: 'User dashboard page'
+});
+
 // Get the user's information from the store
 const userStore = useUserStore();
 const userData = ref(null); // Use a ref to make it reactive
