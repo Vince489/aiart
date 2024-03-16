@@ -102,6 +102,7 @@ export const useUserStore = defineStore({
           if (!response.ok) {
             throw new Error(data.message);
           }
+          console.log('User data:', data);
           // Update userData state with user data
           this.setUserData(data);
         }
