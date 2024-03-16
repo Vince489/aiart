@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia';
-import { useRouter } from 'vue-router';
 
 export const useUserStore = defineStore({
   id: 'user', // unique identifier for the store
 
   // State properties
   state: () => ({
-    isAuthenticated: false, // indicates whether the user is authenticated or not
     userData: null, // holds user data like username, email, etc.
   }),
 
@@ -17,15 +15,10 @@ export const useUserStore = defineStore({
       this.userData = userData;
     },
 
-    // Action to set authentication status
-    setIsAuthenticated(isAuthenticated) {
-      this.isAuthenticated = isAuthenticated;
-    },
-
     // Action to perform login
     async login({ userName, password }) {
       try {
-        const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/login', {
+        const response = await fetch('http://localhost:5550/api/v1/user/login', {
           method: 'POST',
           mode: 'cors',
           credentials: 'include',
@@ -39,7 +32,7 @@ export const useUserStore = defineStore({
         });
 
         const data = await response.json();
-        
+        console.log('Login:', data.user.isAuthenticated);
         if (!response.ok) {
           throw new Error(data.message);
         }
@@ -47,12 +40,12 @@ export const useUserStore = defineStore({
         // Store JWT token in localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', data.token);
+          localStorage.setItem('stat', data.user.isAuthenticated);
         }
         
         // Set user data and authentication status
         await this.setUserData(data.user); // Wait for setting state to complete
 
-        this.setIsAuthenticated(true);      
       } catch (error) {
         console.error('Error logging in:', error);
         throw error;
@@ -62,7 +55,7 @@ export const useUserStore = defineStore({
     // Action to perform logout
     async logout() {
       try {
-        const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/logout', {
+        const response = await fetch('http://localhost:5550/api/v1/user/logout', {
           method: 'POST', // Using POST for logout
           mode: 'cors',
           credentials: 'include',
@@ -70,17 +63,17 @@ export const useUserStore = defineStore({
 
         if (response.ok) {
           // Clear user data and authentication status
-          this.setIsAuthenticated(false);
           this.setUserData(null);
 
           // Clear JWT token from localStorage
           if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
+            localStorage.removeItem('stat');
           }
 
           // Redirect to login or any other appropriate route
-          const router = useRouter();
-          router.push({ name: 'login' });
+          // const router = useRouter();
+          // router.push({ name: 'login' });
         } else {
           // Handle logout error
           console.error('Error logging out:', response.statusText);
@@ -97,17 +90,21 @@ export const useUserStore = defineStore({
       try {
         // Ensure execution in the browser environment
         if (typeof window !== 'undefined') {
+          // Check if JWT token is present in localStorage
+          if (!localStorage.getItem('token')) {
+            return { success: false, message: 'No token found' };
+          }
           // Call your user data API endpoint here
-          const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/getUser', {
+          const response = await fetch('http://localhost:5550/api/v1/user/getUser', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           });
           const data = await response.json();
-          // console.log('Get User:', data);
-
+          if (!response.ok) {
+            throw new Error(data.message);
+          }
           // Update userData state with user data
           this.setUserData(data);
         }
-
         return { success: true, message: 'User data fetched' };
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -117,8 +114,6 @@ export const useUserStore = defineStore({
   },
     // Getters to retrieve computed properties based on state
     getters: {
-      isLoggedIn() {
-        return this.isAuthenticated;
-      }
+
     }
 });
