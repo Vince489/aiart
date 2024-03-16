@@ -18,7 +18,7 @@ export const useUserStore = defineStore({
     // Action to perform login
     async login({ userName, password }) {
       try {
-        const response = await fetch('http://localhost:5550/api/v1/user/login', {
+        const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/login', {
           method: 'POST',
           mode: 'cors',
           credentials: 'include',
@@ -55,7 +55,7 @@ export const useUserStore = defineStore({
     // Action to perform logout
     async logout() {
       try {
-        const response = await fetch('http://localhost:5550/api/v1/user/logout', {
+        const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/logout', {
           method: 'POST', // Using POST for logout
           mode: 'cors',
           credentials: 'include',
@@ -95,7 +95,7 @@ export const useUserStore = defineStore({
             return { success: false, message: 'No token found' };
           }
           // Call your user data API endpoint here
-          const response = await fetch('http://localhost:5550/api/v1/user/getUser', {
+          const response = await fetch('https://zplogin-production.up.railway.app/api/v1/user/getUser', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           });
           const data = await response.json();
