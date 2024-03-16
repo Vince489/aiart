@@ -40,7 +40,6 @@ export const useUserStore = defineStore({
         // Store JWT token in localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('token', data.token);
-          localStorage.setItem('stat', data.user.isAuthenticated);
         }
         
         // Set user data and authentication status
