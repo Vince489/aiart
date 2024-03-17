@@ -18,7 +18,12 @@
         <NuxtLink to="#" class="text-slate-200">Art Board</NuxtLink>
         <NuxtLink to="/dashboard" class="text-slate-200">Dashboard</NuxtLink>
       </div>
-      <div class="hidden md:flex items-center space-x-4">
+      <div v-if="isAuthenticated" class="hidden md:flex items-center space-x-4">
+        <!-- Show Logout link if authenticated -->
+        <NuxtLink to="#" class="text-slate-200" @click="logout">Logout</NuxtLink>
+      </div>
+      <div v-else class="hidden md:flex items-center space-x-4">
+        <!-- Show Login and Sign Up links if not authenticated -->
         <NuxtLink to="/login" class="text-slate-200">Login</NuxtLink>
         <NuxtLink to="/signup" class="text-slate-200">Sign Up</NuxtLink>
       </div>
@@ -28,8 +33,15 @@
       <NuxtLink to="#" class="text-slate-200 block py-2">Generate</NuxtLink>
       <NuxtLink to="#" class="text-slate-200 block py-2">About</NuxtLink>
       <NuxtLink to="#" class="text-slate-200 block py-2">Contact</NuxtLink>
-      <NuxtLink to="/login" class="text-slate-200 block py-2">Login</NuxtLink>
-      <NuxtLink to="/signup" class="text-slate-200 block py-2">Sign Up</NuxtLink>
+      <template v-if="isAuthenticated">
+        <!-- Show Logout link if authenticated -->
+        <NuxtLink to="#" class="text-slate-200 block py-2" @click="logout">Logout</NuxtLink>
+      </template>
+      <template v-else>
+        <!-- Show Login and Sign Up links if not authenticated -->
+        <NuxtLink to="/login" class="text-slate-200 block py-2">Login</NuxtLink>
+        <NuxtLink to="/signup" class="text-slate-200 block py-2">Sign Up</NuxtLink>
+      </template>
     </div>
   </nav>
 
@@ -43,8 +55,28 @@ import { useUserStore } from '~/stores/userStore';
 import { ref, onMounted } from 'vue';
 
 const userStore = useUserStore();
+const isAuthenticated = ref(false);
 
-const isAuthenticated = userStore.isAuthenticated;
+const logout = async () => {
+  try {
+    await userStore.logout();
+  } catch (error) {
+    console.error('Error logging out:', error);
+  }
+};
+
+userStore.getUserData().then(() => {
+  isAuthenticated.value = userStore.isAuthenticated;
+});
+
+onMounted(() => {
+  isAuthenticated.value = userStore.isAuthenticated;
+});
+
+
+
+  
+// console.log('uu', isAuthenticated);
 
 let toggle_menu = ref(false);
 
@@ -62,6 +94,8 @@ onMounted(() => {
 function toggleMenu() {
   toggle_menu.value = !toggle_menu.value;
 }
+
+// 
 </script>
 
 <style scoped>

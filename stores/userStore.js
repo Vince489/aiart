@@ -6,6 +6,7 @@ export const useUserStore = defineStore({
   // State properties
   state: () => ({
     userData: null, // holds user data like username, email, etc.
+    isAuthenticated: false, // holds authentication status
   }),
 
   // Actions to perform async operations
@@ -13,6 +14,7 @@ export const useUserStore = defineStore({
     // Action to set user data
     setUserData(userData) {
       this.userData = userData;
+      this.isAuthenticated = userData.isAuthenticated;
     },
 
     // Action to perform login
@@ -42,7 +44,7 @@ export const useUserStore = defineStore({
           localStorage.setItem('stat', data.user.isAuthenticated);
         }
 
-        console.log('Login response:', data.user);
+        console.log('User Authenticated:', data.user.isAuthenticated);
         
         // Set user data and authentication status
         await this.setUserData(data.user); // Wait for setting state to complete
@@ -71,10 +73,6 @@ export const useUserStore = defineStore({
             localStorage.removeItem('token');
             localStorage.removeItem('stat');
           }
-
-          // Redirect to login or any other appropriate route
-          // const router = useRouter();
-          // router.push({ name: 'login' });
         } else {
           // Handle logout error
           console.error('Error logging out:', response.statusText);
@@ -116,6 +114,8 @@ export const useUserStore = defineStore({
   },
     // Getters to retrieve computed properties based on state
     getters: {
-
-    }
+      // isAuthenticated() {
+      //   return this.userData.isAuthenticated !== null;
+      // },
+    },
 });
