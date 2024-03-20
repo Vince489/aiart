@@ -33,7 +33,7 @@
       <NuxtLink to="#" class="text-slate-200 block py-2">Generate</NuxtLink>
       <NuxtLink to="#" class="text-slate-200 block py-2">About</NuxtLink>
       <NuxtLink to="#" class="text-slate-200 block py-2">Contact</NuxtLink>
-      <template v-if="isAuthenticated">
+      <template v-if="!isAuthenticated">
         <!-- Show Logout link if authenticated -->
         <NuxtLink to="#" class="text-slate-200 block py-2" @click="logout">Logout</NuxtLink>
       </template>
@@ -55,27 +55,10 @@ import { useUserStore } from '~/stores/userStore';
 import { ref, onMounted } from 'vue';
 
 const userStore = useUserStore();
-const isAuthenticated = ref(false);
-
-const logout = async () => {
-  try {
-    await userStore.logout();
-  } catch (error) {
-    console.error('Error logging out:', error);
-  }
-};
-
 userStore.getUserData().then(() => {
-  isAuthenticated.value = userStore.isAuthenticated;
+  isAuthenticated.value = userStore.userData.isAuthenticated;
 });
 
-onMounted(() => {
-  isAuthenticated.value = userStore.isAuthenticated;
-});
-
-
-
-  
 // console.log('uu', isAuthenticated);
 
 let toggle_menu = ref(false);

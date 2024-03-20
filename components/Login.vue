@@ -30,18 +30,17 @@
 </template>
 
 <script setup>
-import { useUserStore } from '~/stores/userStore';
+import {useAuthStore} from "~/stores/auth.js";
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {navigateTo} from "#app";
+
+const authStore = useAuthStore()
 
 const userName = ref('');
 const password = ref('');
 const userNameError = ref('');
 const passwordError = ref('');
 const generalError = ref('');
-
-const userStore = useUserStore();
-const router = useRouter();
 
 const handleLogin = async () => {
   // Reset errors
@@ -51,12 +50,10 @@ const handleLogin = async () => {
 
   try {
     // Perform login
-    await userStore.login({ userName: userName.value, password: password.value });
-
+    const response = await authStore.$login(userName.value, password.value);
     // Check if the login attempt was successful
-    if (userStore.userData.isAuthenticated) {
-      // Redirect to dashboard
-      router.push({ name: 'dashboard' });
+    if (response?.user?.isAuthenticated) {
+      return navigateTo("/dashboard")
     }
   } catch (error) {
     // Handle login error

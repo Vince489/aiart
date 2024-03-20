@@ -15,11 +15,10 @@
 
 <script setup>
 definePageMeta({
-  // middleware: 'auth',
   title: 'Dashboard',
   description: 'User dashboard page'
 });
-import { useUserStore } from '~/stores/userStore';
+import {useAuthStore} from "~/stores/authStore.js";
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
@@ -30,7 +29,7 @@ definePageMeta({
 });
 
 // Get the user's information from the store
-const userStore = useUserStore();
+const authStore = useAuthStore()
 const userData = ref(null); // Use a ref to make it reactive
 
 // Get router instance
@@ -38,7 +37,7 @@ const router = useRouter();
 
 const handleLogout = async () => {
   try {
-    await userStore.logout();
+    await authStore.logout();
     router.push({ name: 'login' });
   } catch (error) {
     console.error('Error logging out:', error);
@@ -46,11 +45,7 @@ const handleLogout = async () => {
 };
 
 onMounted(() => {
-  // Fetch user data when the component is mounted
-  userStore.getUserData().then(() => {
-    // Once userData is fetched, update the ref
-    userData.value = userStore.userData;
-  });
+  userData.value = authStore.currentUser
 });
 </script>
 
