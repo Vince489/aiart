@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import {useAuthStore} from "~/stores/auth.js";
+import {useAuthStore} from "~/stores/authStore.js";
 import { ref } from 'vue';
 import {navigateTo} from "#app";
 
